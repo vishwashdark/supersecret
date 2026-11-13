@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>sowwwwry 🐾</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-cream: #fff8f3;
+    --rug-main: #ffe6ef;
+    --rug-border: #fca5bb;
+    --ink: #4a2d3b;
+    --ink-soft: #85586f;
+    --accent-pink: #ff6584;
+    --accent-gold: #ffbe3b;
+    --card-bg: #fffdfb;
+    --safe-bottom: env(safe-area-inset-bottom, 10px);
+    --safe-top: env(safe-area-inset-top, 10px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html, body {
+    width: 100%;
+    height: 100%;
+    height: -webkit-fill-available;
+    overflow: hidden;
+    font-family: "Fredoka", "Quicksand", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg-cream);
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* =========================================================
+     COZY ROOM BACKGROUND & NIGHT MODE
+     ========================================================= */
+  .room {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    touch-action: none; /* Prevents mobile page pull/scroll */
+    background: radial-gradient(ellipse at 50% 25%, #fffbf7 0%, #fff1e5 50%, #fde4d2 100%);
+    transition: background 0.8s ease;
+  }
+
+  /* Night mode transition */
+  .room.night-mode {
+    background: radial-gradient(ellipse at 50% 25%, #2a224a 0%, #1e1738 55%, #130f24 100%);
+  }
+
+  /* Sunbeam (Day) / Moonbeam (Night) */
+  .sunbeam {
+    position: absolute;
+    top: -10%;
+    right: 10%;
+    width: min(380px, 50vw);
+    height: 120%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 240, 220, 0.18) 60%, rgba(255, 255, 255, 0) 100%);
+    transform: rotate(-16deg);
+    pointer-events: none;
+    filter: blur(16px);
+    transition: opacity 0.8s, background 0.8s;
+  }
+  .room.night-mode .sunbeam {
+    background: linear-gradient(180deg, rgba(165, 180, 252, 0.28) 0%, rgba(129, 140, 248, 0.08) 60%, transparent 100%);
+  }
+
+  /* Decorative window top right */
+  .window-pane {
+    position: absolute;
+    top: calc(var(--safe-top) + 20px);
+    right: 24px;
+    width: 95px;
+    height: 125px;
+    border: 6px solid #edd1bb;
+    border-radius: 46px 46px 10px 10px;
+    background: linear-gradient(135deg, #e0f2fe 0%, #fffde7 100%);
+    opacity: 0.75;
+    box-shadow: 0 8px 24px rgba(220, 175, 140, 0.35);
+    pointer-events: none;
+    transition: background 0.8s, border-color 0.8s;
+  }
+  .window-pane::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    transform: translateX(-50%);
+    background: #edd1bb;
+  }
+  .window-pane::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #edd1bb;
+  }
+  .room.night-mode .window-pane {
+    border-color: #3b355c;
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  }
+  .room.night-mode .window-pane::before,
+  .room.night-mode .window-pane::after {
+    background: #3b355c;
+  }
+
+  /* Glowing Fairy Lights (in night mode) */
+  .fairy-lights {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 35px;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 10px;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    z-index: 20;
+  }
+  .room.night-mode .fairy-lights {
+    opacity: 1;
+  }
+  .light-bulb {
+    width: 10px;
+    height: 14px;
+    border-radius: 50% 50% 40% 40%;
+    background: #fde047;
+    box-shadow: 0 0 14px #fde047, 0 0 24px #f59e0b;
+    animation: twinkle 1.5s ease-in-out infinite alternate;
+  }
+  .light-bulb:nth-child(2n) { background: #ff7698; box-shadow: 0 0 14px #ff7698; animation-delay: 0.3s; }
+  .light-bulb:nth-child(3n) { background: #38bdf8; box-shadow: 0 0 14px #38bdf8; animation-delay: 0.6s; }
+  .light-bulb:nth-child(4n) { background: #a78bfa; box-shadow: 0 0 14px #a78bfa; animation-delay: 0.9s; }
+  @keyframes twinkle { 0% { opacity: 0.55; } 100% { opacity: 1; transform: scale(1.1); } }
+
+  /* Houseplant in corner */
+  .plant {
+    position: absolute;
+    bottom: calc(var(--safe-bottom) + 68px);
+    left: 14px;
+    width: 65px;
+    height: 85px;
+    pointer-events: none;
+    opacity: 0.88;
+    z-index: 5;
+    transition: opacity 0.5s;
+  }
+
+  /* Water bowl */
+  .bowl {
+    position: absolute;
+    bottom: calc(var(--safe-bottom) + 72px);
+    right: 18px;
+    width: 58px;
+    height: 26px;
+    border-radius: 0 0 30px 30px;
+    background: linear-gradient(180deg, #ff9bb6, #eb6b8b);
+    border: 3px solid #fff;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    cursor: pointer;
+    z-index: 5;
+    transition: transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+  .bowl::before {
+    content: "🐾 water";
+    position: absolute;
+    top: -17px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    opacity: 0.8;
+  }
+  .room.night-mode .bowl::before { color: #d8b4fe; }
+  .bowl:hover, .bowl:active { transform: scale(1.15); }
+
+  /* Cozy centerpiece pastel rug */
+  .rug {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(620px, 90vw);
+    height: min(340px, 52vh);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, #fff0f5 0%, #ffd6e4 62%, #ffbfd4 100%);
+    border: 4px dashed var(--rug-border);
+    box-shadow: 0 24px 60px -15px rgba(230, 130, 160, 0.38);
+    pointer-events: none;
+    display: grid;
+    place-items: center;
+    transition: background 0.8s, border-color 0.8s, box-shadow 0.8s;
+  }
+  .room.night-mode .rug {
+    background: radial-gradient(ellipse at center, #372957 0%, #2b1d47 62%, #1e1336 100%);
+    border-color: #6d4e8c;
+    box-shadow: 0 24px 60px -15px rgba(15, 10, 30, 0.6);
+  }
+  .rug-pattern {
+    color: rgba(230, 120, 150, 0.32);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    letter-spacing: 22px;
+    user-select: none;
+    transition: color 0.8s;
+  }
+  .room.night-mode .rug-pattern {
+    color: rgba(192, 132, 252, 0.25);
+  }
+
+  /* Interactive yarn ball */
+  .yarn-ball {
+    position: absolute;
+    left: calc(50% + 130px);
+    top: calc(50% + 45px);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ff7698, #e84168);
+    box-shadow: 0 6px 16px rgba(232, 65, 104, 0.38);
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+  .yarn-ball:hover, .yarn-ball:active {
+    transform: scale(1.25) rotate(25deg);
+  }
+  .yarn-ball::after {
+    content: "";
+    position: absolute;
+    right: -14px;
+    bottom: 2px;
+    width: 24px;
+    height: 12px;
+    border: 2.5px solid #ff7698;
+    border-color: transparent transparent #ff7698 transparent;
+    border-radius: 0 0 50% 50%;
+  }
+
+  /* Interactive Cardboard Box ("If I fits, I sits") */
+  .cardboard-box {
+    position: absolute;
+    left: calc(50% - 170px);
+    top: calc(50% + 35px);
+    width: 68px;
+    height: 52px;
+    background: #d4a373;
+    border-radius: 8px;
+    border: 2.5px solid #b08968;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+    cursor: pointer;
+    z-index: 12;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 4px;
+    transition: transform 0.2s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+  .cardboard-box:hover, .cardboard-box:active {
+    transform: scale(1.08);
+  }
+  .box-label {
+    font-size: 8.5px;
+    font-weight: 700;
+    color: #7f5539;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .box-occupant {
+    position: absolute;
+    bottom: 18px;
+    width: 44px;
+    height: 34px;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+
+  /* Glowing Laser Pointer Dot */
+  .laser-dot {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #ff0055;
+    box-shadow: 0 0 10px #ff0055, 0 0 22px #ff0000, 0 0 35px #ff6584;
+    pointer-events: none;
+    z-index: 90;
+    transform: translate(-50%, -50%);
+    display: none;
+    animation: laserPulse 0.4s infinite alternate;
+  }
+  @keyframes laserPulse {
+    0% { transform: translate(-50%, -50%) scale(0.9); }
+    100% { transform: translate(-50%, -50%) scale(1.2); }
+  }
+
+  /* =========================================================
+     TOP FLOATING HEADER (Responsive & Phone Friendly)
+     ========================================================= */
+  .top-bar {
+    position: absolute;
+    top: calc(var(--safe-top) + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(860px, 94vw);
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(255, 255, 255, 0.95);
+    border-radius: 999px;
+    padding: 7px 16px;
+    box-shadow: 0 10px 30px -10px rgba(180, 80, 110, 0.16);
+    transition: background 0.8s, border-color 0.8s;
+  }
+  .room.night-mode .top-bar {
+    background: rgba(30, 24, 52, 0.92);
+    border-color: rgba(147, 112, 219, 0.3);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .brand-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #b82d61;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .room.night-mode .brand-title { color: #f472b6; }
+  
+  .top-stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stat-pill {
+    background: #fff0f5;
+    color: #b82d61;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 5px 11px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .room.night-mode .stat-pill {
+    background: #3b2c58;
+    color: #fbcfe8;
+  }
+  .sound-btn {
+    border: 0;
+    background: #fff;
+    font-size: 0.95rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .room.night-mode .sound-btn {
+    background: #3b2c58;
+    color: #fff;
+  }
+
+  /* =========================================================
+     BOTTOM TOYBOX DOCK (Thumb-Friendly for Mobile)
+     ========================================================= */
+  .bottom-dock {
+    position: absolute;
+    bottom: calc(var(--safe-bottom) + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(255, 255, 255, 0.95);
+    border-radius: 999px;
+    padding: 6px 12px;
+    box-shadow: 0 12px 36px -8px rgba(180, 80, 110, 0.22);
+    max-width: 95vw;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .bottom-dock::-webkit-scrollbar { display: none; }
+  .room.night-mode .bottom-dock {
+    background: rgba(30, 24, 52, 0.92);
+    border-color: rgba(147, 112, 219, 0.3);
+  }
+  
+  .dock-btn {
+    border: 0;
+    background: #fff;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 700;
+    padding: 8px 13px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    transition: transform 0.2s cubic-bezier(0.3, 1.4, 0.5, 1), background 0.2s, box-shadow 0.2s;
+    min-height: 40px;
+    touch-action: manipulation;
+  }
+  .dock-btn:hover, .dock-btn:active {
+    transform: translateY(-2px) scale(1.05);
+  }
+  .dock-btn.active {
+    background: linear-gradient(135deg, #ff6584, #ff8ba7);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(255, 101, 132, 0.5);
+  }
+  .room.night-mode .dock-btn {
+    background: #3b2c58;
+    color: #fce7f3;
+  }
+  .room.night-mode .dock-btn.active {
+    background: linear-gradient(135deg, #ec4899, #a855f7);
+    color: #fff;
+  }
+
+  /* Activity Status Toast (e.g. "Laser Mode ON!") */
+  .toast {
+    position: absolute;
+    top: calc(var(--safe-top) + 62px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px) scale(0.9);
+    background: rgba(255, 255, 255, 0.95);
+    color: #b82d61;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 999px;
+    box-shadow: 0 8px 20px rgba(180, 80, 110, 0.18);
+    pointer-events: none;
+    z-index: 150;
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.3, 1.5, 0.5, 1), opacity 0.3s;
+    white-space: nowrap;
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  /* =========================================================
+     PRETTY WANDERING CAT STYLING
+     ========================================================= */
+  .cat {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 76px;
+    height: 58px;
+    cursor: pointer;
+    will-change: transform;
+    touch-action: manipulation;
+  }
+
+  /* Soft ground shadow */
+  .cat-shadow {
+    position: absolute;
+    left: 10px;
+    bottom: -1px;
+    width: 54px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(140, 60, 90, 0.15);
+    filter: blur(1.5px);
+    pointer-events: none;
+    transition: transform 0.2s;
+  }
+  .room.night-mode .cat-shadow { background: rgba(0, 0, 0, 0.4); }
+  .cat.happy .cat-shadow { transform: scale(0.8); }
+
+  .cat-sprite {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-origin: center center;
+    transition: transform 0.12s ease-out;
+    filter: drop-shadow(0 4px 8px rgba(180, 80, 110, 0.12));
+  }
+  .cat-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  /* Walking Leg Animation */
+  .cat.walking .leg-front-near {
+    animation: legSwingFront 0.32s ease-in-out infinite alternate;
+    transform-origin: 50% 10%;
+    transform-box: fill-box;
+  }
+  .cat.walking .leg-back-near {
+    animation: legSwingBack 0.32s ease-in-out infinite alternate;
+    transform-origin: 50% 10%;
+    transform-box: fill-box;
+  }
+  .cat.walking .leg-front-far {
+    animation: legSwingBack 0.32s ease-in-out infinite alternate;
+    transform-origin: 50% 10%;
+    transform-box: fill-box;
+  }
+  .cat.walking .leg-back-far {
+    animation: legSwingFront 0.32s ease-in-out infinite alternate;
+    transform-origin: 50% 10%;
+    transform-box: fill-box;
+  }
+  @keyframes legSwingFront { 0% { transform: rotate(-25deg); } 100% { transform: rotate(25deg); } }
+  @keyframes legSwingBack  { 0% { transform: rotate(25deg); } 100% { transform: rotate(-25deg); } }
+
+  /* Bobbing body while walking */
+  .cat.walking .cat-body-group {
+    animation: catBob 0.16s ease-in-out infinite alternate;
+  }
+  @keyframes catBob { 0% { transform: translateY(0); } 100% { transform: translateY(-2.4px); } }
+
+  /* Tail wag */
+  .cat.walking .cat-tail {
+    animation: tailWag 0.32s ease-in-out infinite alternate;
+    transform-origin: 90% 90%;
+    transform-box: fill-box;
+  }
+  @keyframes tailWag { 0% { transform: rotate(-10deg); } 100% { transform: rotate(16deg); } }
+  .cat:not(.walking) .cat-tail {
+    animation: tailIdle 2.6s ease-in-out infinite alternate;
+    transform-origin: 90% 90%;
+    transform-box: fill-box;
+  }
+  @keyframes tailIdle { 0% { transform: rotate(-4deg); } 100% { transform: rotate(10deg); } }
+
+  /* Happy jump when clicked or petted */
+  .cat.happy .cat-sprite {
+    animation: happyPop 0.55s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+  @keyframes happyPop {
+    0%   { transform: scale(var(--facing, 1)) translateY(0); }
+    40%  { transform: scale(calc(var(--facing, 1) * 1.15), 0.92) translateY(-16px); }
+    75%  { transform: scale(calc(var(--facing, 1) * 0.95), 1.05) translateY(0); }
+    100% { transform: scale(var(--facing, 1)) translateY(0); }
+  }
+
+  /* Cat Name Pill */
+  .cat-name-tag {
+    position: absolute;
+    left: 50%;
+    bottom: -15px;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(4px);
+    padding: 1.5px 7px;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(180, 80, 110, 0.12);
+    pointer-events: none;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .cat:hover .cat-name-tag, .cat:active .cat-name-tag {
+    background: #ffffff;
+    color: var(--accent-pink);
+    transform: translateX(-50%) scale(1.12);
+  }
+  .cat.is-read .cat-name-tag {
+    color: #2e7d32;
+    background: rgba(240, 253, 244, 0.94);
+  }
+
+  /* Thought bubble */
+  .thought-bubble {
+    position: absolute;
+    left: 50%;
+    top: -26px;
+    transform: translateX(-50%) scale(0);
+    background: #ffffff;
+    color: var(--ink);
+    border-radius: 14px;
+    padding: 3px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(180, 80, 110, 0.18);
+    pointer-events: none;
+    transition: transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1), opacity 0.2s;
+    opacity: 0;
+    z-index: 25;
+    white-space: nowrap;
+  }
+  .thought-bubble::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    transform: translateX(-50%);
+    border-width: 4px 4px 0 4px;
+    border-style: solid;
+    border-color: #ffffff transparent transparent transparent;
+  }
+  .thought-bubble.show {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+
+  /* Floating particle */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 250;
+    animation: particleFly 0.95s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  }
+  @keyframes particleFly {
+    0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.2) rotate(var(--rot)); opacity: 0; }
+  }
+
+  /* Dropped fish treat */
+  .floor-treat {
+    position: absolute;
+    font-size: 1.6rem;
+    pointer-events: none;
+    z-index: 40;
+    animation: dropBounce 0.45s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+  @keyframes dropBounce {
+    0%   { transform: translateY(-30px) scale(0); opacity: 0; }
+    70%  { transform: translateY(0) scale(1.3); }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+  }
+
+  /* =========================================================
+     CUTE & COMPACT SOWWWWRY MODAL
+     ========================================================= */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(70, 35, 50, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 300;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.26s ease;
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .note-card {
+    position: relative;
+    width: min(400px, 92vw);
+    background: var(--card-bg);
+    border-radius: 32px;
+    padding: 28px 22px 22px;
+    text-align: center;
+    box-shadow: 0 25px 70px -15px rgba(80, 25, 45, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    transform: translateY(22px) scale(0.95);
+    transition: transform 0.32s cubic-bezier(0.3, 1.4, 0.5, 1);
+  }
+  .modal-overlay.active .note-card {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 0;
+    background: #fce7ef;
+    color: var(--ink);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .modal-close:hover, .modal-close:active {
+    background: #f8cfe0;
+    transform: scale(1.1);
+  }
+
+  .card-avatar-wrap {
+    width: 90px;
+    height: 70px;
+    margin: 0 auto 10px;
+    display: grid;
+    place-items: center;
+    filter: drop-shadow(0 6px 14px rgba(255, 101, 132, 0.2));
+  }
+
+  .card-cat-name {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    display: inline-block;
+    padding: 3px 12px;
+    background: #fff0f5;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+
+  .apology-headline {
+    font-size: clamp(1.9rem, 7vw, 2.6rem);
+    font-weight: 700;
+    color: #c42b58;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+
+  .apology-sub {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    line-height: 1.45;
+    margin-bottom: 22px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn-forgive {
+    border: 0;
+    background: linear-gradient(135deg, #ff6584, #ff8ba7);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1.02rem;
+    font-weight: 700;
+    padding: 11px 24px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px -6px rgba(255, 101, 132, 0.6);
+    transition: transform 0.2s cubic-bezier(0.3, 1.5, 0.5, 1), box-shadow 0.2s;
+    min-height: 44px;
+  }
+  .btn-forgive:hover, .btn-forgive:active {
+    transform: translateY(-2px) scale(1.04);
+  }
+  .btn-secondary {
+    border: 1.5px solid #f2d6e0;
+    background: #fff;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    min-height: 44px;
+  }
+
+  /* Responsive for mobile screens */
+  @media (max-width: 600px) {
+    .top-bar { padding: 6px 12px; }
+    .brand-title { font-size: 1rem; }
+    .stat-pill { font-size: 0.76rem; padding: 4px 8px; }
+    .bottom-dock { padding: 5px 8px; gap: 6px; }
+    .dock-btn { font-size: 0.78rem; padding: 7px 11px; min-height: 38px; }
+    .cat { width: 68px; height: 52px; }
+    .cat-shadow { width: 48px; }
+    .plant, .window-pane { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="room" id="room">
+  <!-- Glowing fairy lights for night mode -->
+  <div class="fairy-lights">
+    <div class="light-bulb"></div><div class="light-bulb"></div>
+    <div class="light-bulb"></div><div class="light-bulb"></div>
+    <div class="light-bulb"></div><div class="light-bulb"></div>
+    <div class="light-bulb"></div><div class="light-bulb"></div>
+  </div>
+
+  <!-- Sunbeam & Window -->
+  <div class="sunbeam"></div>
+  <div class="window-pane"></div>
+
+  <!-- Cute plant & water bowl -->
+  <svg class="plant" viewBox="0 0 70 90" fill="none">
+    <ellipse cx="35" cy="80" rx="18" ry="8" fill="#d4a373"/>
+    <path d="M 20 80 L 24 64 L 46 64 L 50 80 Z" fill="#b08968"/>
+    <path d="M 35 64 Q 28 35 15 26 Q 28 20 35 64 Z" fill="#6ba770"/>
+    <path d="M 35 64 Q 42 32 55 24 Q 44 18 35 64 Z" fill="#4d8b52"/>
+    <path d="M 35 64 Q 35 16 33 10 Q 37 16 35 64 Z" fill="#7ebd84"/>
+  </svg>
+  <div class="bowl" id="waterBowl" title="A fresh bowl of water for the cats"></div>
+
+  <!-- Cozy Center Rug -->
+  <div class="rug" id="rug">
+    <div class="rug-pattern">🐾 &nbsp; 🐾 &nbsp; 🐾</div>
+  </div>
+
+  <!-- Interactive Cardboard Box ("If I fits, I sits") -->
+  <div class="cardboard-box" id="cardboardBox" title="Tap to call a cat into the box!">
+    <div class="box-occupant" id="boxOccupant"></div>
+    <div class="box-label">CAT CO. 📦</div>
+  </div>
+
+  <!-- Interactive Yarn Ball -->
+  <div class="yarn-ball" id="yarnBall" title="Play with the yarn ball"></div>
+
+  <!-- Red Laser Dot -->
+  <div class="laser-dot" id="laserDot"></div>
+
+  <!-- Wandering cats container -->
+  <div id="catsContainer"></div>
+</div>
+
+<!-- Floating Top Status Bar -->
+<header class="top-bar">
+  <div class="brand">
+    <div class="brand-title">sowwwwry 🥺🐾</div>
+  </div>
+  <div class="top-stats">
+    <div class="stat-pill" id="happinessPill" title="Happiness meter">
+      💖 <span id="happyScore">20</span>%
+    </div>
+    <div class="stat-pill" id="readCounter" title="Cats clicked">
+      🐾 <span id="readCount">0</span>/9
+    </div>
+    <button class="sound-btn" id="soundBtn" aria-label="Toggle Sound">🔊</button>
+  </div>
+</header>
+
+<!-- Activity Notification Toast -->
+<div class="toast" id="activityToast">Laser ON! Drag anywhere 🔴</div>
+
+<!-- Bottom Toybox Dock (Thumb-friendly mobile bar) -->
+<nav class="bottom-dock">
+  <button class="dock-btn" id="dockLaser" title="Play with laser pointer">
+    🔴 Laser
+  </button>
+  <button class="dock-btn" id="dockTreat" title="Drop a fish treat">
+    🐟 Treat
+  </button>
+  <button class="dock-btn" id="dockBox" title="Box fun">
+    📦 Box
+  </button>
+  <button class="dock-btn" id="dockBrush" title="Brush / pet cats">
+    🪮 Brush
+  </button>
+  <button class="dock-btn" id="dockNight" title="Night / Day nap mode">
+    🌙 Night
+  </button>
+  <button class="dock-btn" id="dockCall" title="Call cats to rug">
+    🔔 Call
+  </button>
+</nav>
+
+<!-- Cute Sowwwwry Modal -->
+<div class="modal-overlay" id="noteModal">
+  <div class="note-card" role="dialog" aria-modal="true">
+    <button class="modal-close" id="modalClose" aria-label="Close note">✕</button>
+    
+    <div class="card-avatar-wrap" id="modalAvatar"></div>
+    <div class="card-cat-name" id="modalCatName">Mochi 🌸</div>
+
+    <div class="apology-headline" id="modalHeadline">sowwwwry 🥺</div>
+    <div class="apology-sub" id="modalSub">please don't be mad at Vishwash! 🐾</div>
+
+    <div class="card-actions">
+      <button class="btn-forgive" id="modalForgiveBtn">Forgive? 🥺💖</button>
+      <button class="btn-secondary" id="modalPetBtn">Pet 🐾</button>
+      <button class="btn-secondary" id="modalNextBtn">Next Cat ➡️</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CONFIG & CUTE SOWWWWRIES
+   ========================================================= */
+const CONFIG = {
+  yourName: "Vishwash",
+  cats: [
+    {
+      name: "Mochi",
+      accessory: "sakura",
+      coat: "#ffffff",
+      farCoat: "#f0f2f8",
+      belly: "#ffffff",
+      eyeColor: "#38bdf8",
+      innerEar: "#ffb4c8",
+      type: "solid",
+      headline: "sorrry 🥺",
+      sub: "sowwwwry... please don't be mad at Vishwash! 🐾",
+      tag: "Mochi 🌸"
+    },
+    {
+      name: "Biscuit",
+      accessory: "bow",
+      coat: "#fca34d",
+      farCoat: "#e58e37",
+      belly: "#fff2e2",
+      eyeColor: "#48bb78",
+      innerEar: "#ffb4c8",
+      type: "tabby",
+      headline: "sowwwwry 🥺👉👈",
+      sub: "super sowwry! i brought snacks to say sorry 🍪",
+      tag: "Biscuit 🎀"
+    },
+    {
+      name: "Luna",
+      accessory: "moon",
+      coat: "#2d3748",
+      farCoat: "#1a202c",
+      belly: "#ffffff",
+      eyeColor: "#f6ad55",
+      innerEar: "#4a5568",
+      type: "tuxedo",
+      headline: "im sowwy 😿",
+      sub: "sowwwwry... sending you the warmest cuddles 🌙",
+      tag: "Luna 🌙"
+    },
+    {
+      name: "Pudding",
+      accessory: "cherry",
+      coat: "#f6d89b",
+      farCoat: "#e4bf79",
+      belly: "#fff9ee",
+      eyeColor: "#ed8936",
+      innerEar: "#ffc1cf",
+      type: "tabby",
+      headline: "sorrry, sowwwwry 🥺",
+      sub: "pwease forgive Vishwash? sowwry! 🐾",
+      tag: "Pudding 🍒"
+    },
+    {
+      name: "Daisy",
+      accessory: "daisy",
+      coat: "#ffffff",
+      farCoat: "#edf0f7",
+      belly: "#ffffff",
+      eyeColor: "#38b2ac",
+      innerEar: "#4a5568",
+      type: "cow",
+      headline: "so sowwryyy 🥺",
+      sub: "look at my cute sad little face... sowwwwry 🌼",
+      tag: "Daisy 🌼"
+    },
+    {
+      name: "Matcha",
+      accessory: "clover",
+      coat: "#fffaf4",
+      farCoat: "#eee6dc",
+      belly: "#ffffff",
+      eyeColor: "#0bc5ea",
+      innerEar: "#ffb4c8",
+      type: "calico",
+      headline: "sowwwwry 🥺",
+      sub: "verrry verrry sowwry... peace treaty? 🍀",
+      tag: "Matcha 🍀"
+    },
+    {
+      name: "Boba",
+      accessory: "boba",
+      coat: "#a0aec0",
+      farCoat: "#718096",
+      belly: "#e2e8f0",
+      eyeColor: "#ecc94b",
+      innerEar: "#cbd5e0",
+      type: "solid",
+      headline: "sorrry 🥺",
+      sub: "sowwwwry for being silly earlier 🧋",
+      tag: "Boba 🧋"
+    },
+    {
+      name: "Noodle",
+      accessory: "bell",
+      coat: "#f7efe5",
+      farCoat: "#e4d5c4",
+      belly: "#fffbf5",
+      eyeColor: "#3182ce",
+      innerEar: "#5c4033",
+      type: "siamese",
+      headline: "sowwwwry sowwry 🥺",
+      sub: "100 sowwries delivered just for you 🐾",
+      tag: "Noodle 🔔"
+    },
+    {
+      name: "Pip",
+      accessory: "strawberry",
+      coat: "#fbd38d",
+      farCoat: "#ddaa55",
+      belly: "#fff7e6",
+      eyeColor: "#48bb78",
+      innerEar: "#ffb4c8",
+      type: "munchkin",
+      headline: "tiny sowwwwry 🥺",
+      sub: "tiny kitten, huge sowwwwry! 🍓🐾",
+      tag: "Pip 🍓"
+    }
+  ]
+};
+
+/* =========================================================
+   SYNTHESIZED SOUND EFFECTS (Web Audio API)
+   ========================================================= */
+let audioCtx = null;
+let soundEnabled = true;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+}
+
+function playMeow(pitch = 1) {
+  if (!soundEnabled) return;
+  initAudio();
+  try {
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const filter = audioCtx.createBiquadFilter();
+    const gain = audioCtx.createGain();
+
+    osc.type = "sawtooth";
+    filter.type = "lowpass";
+    filter.Q.value = 7;
+
+    osc.frequency.setValueAtTime(460 * pitch, t);
+    osc.frequency.exponentialRampToValueAtTime(880 * pitch, t + 0.12);
+    osc.frequency.exponentialRampToValueAtTime(430 * pitch, t + 0.44);
+
+    filter.frequency.setValueAtTime(850, t);
+    filter.frequency.exponentialRampToValueAtTime(2300, t + 0.12);
+    filter.frequency.exponentialRampToValueAtTime(700, t + 0.44);
+
+    gain.gain.setValueAtTime(0.001, t);
+    gain.gain.linearRampToValueAtTime(0.14, t + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.46);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(t);
+    osc.stop(t + 0.48);
+  } catch (e) {}
+}
+
+function playPurr() {
+  if (!soundEnabled) return;
+  initAudio();
+  try {
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const mod = audioCtx.createOscillator();
+    const modGain = audioCtx.createGain();
+    const masterGain = audioCtx.createGain();
+
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(95, t);
+
+    mod.type = "sine";
+    mod.frequency.setValueAtTime(26, t);
+    modGain.gain.setValueAtTime(34, t);
+
+    mod.connect(modGain);
+    modGain.connect(osc.frequency);
+
+    masterGain.gain.setValueAtTime(0.001, t);
+    masterGain.gain.linearRampToValueAtTime(0.12, t + 0.14);
+    masterGain.gain.linearRampToValueAtTime(0.001, t + 1.1);
+
+    osc.connect(masterGain);
+    masterGain.connect(audioCtx.destination);
+
+    mod.start(t);
+    osc.start(t);
+    mod.stop(t + 1.15);
+    osc.stop(t + 1.15);
+  } catch (e) {}
+}
+
+function playChime() {
+  if (!soundEnabled) return;
+  initAudio();
+  try {
+    const t = audioCtx.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, t + idx * 0.07);
+      gain.gain.setValueAtTime(0.09, t + idx * 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + idx * 0.07 + 0.55);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t + idx * 0.07);
+      osc.stop(t + idx * 0.07 + 0.6);
+    });
+  } catch (e) {}
+}
+
+document.getElementById("soundBtn").addEventListener("click", () => {
+  soundEnabled = !soundEnabled;
+  document.getElementById("soundBtn").textContent = soundEnabled ? "🔊" : "🔇";
+});
+
+/* =========================================================
+   PRETTY KAWAII CAT SVG GENERATOR
+   ========================================================= */
+function buildPrettyCatSVG(cat, id) {
+  let patterns = "";
+  if (cat.type === "tabby") {
+    patterns = `
+      <g stroke="${cat.farCoat}" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.85">
+        <path d="M 42 26 Q 44 35 46 40"/>
+        <path d="M 52 27 Q 54 36 56 41"/>
+        <path d="M 62 28 Q 64 36 66 40"/>
+      </g>`;
+  } else if (cat.type === "cow") {
+    patterns = `
+      <ellipse cx="38" cy="38" rx="10" ry="8" fill="#303952" opacity="0.9"/>
+      <ellipse cx="58" cy="30" rx="8" ry="6" fill="#303952" opacity="0.9"/>`;
+  } else if (cat.type === "calico") {
+    patterns = `
+      <ellipse cx="40" cy="36" rx="10" ry="7" fill="#fca34d" opacity="0.95"/>
+      <ellipse cx="58" cy="32" rx="8" ry="6" fill="#374151" opacity="0.95"/>`;
+  } else if (cat.type === "siamese") {
+    patterns = `
+      <ellipse cx="79" cy="28" rx="8.5" ry="7.5" fill="#5c4033" opacity="0.85"/>
+      <polygon points="63,16 68,3 74,13" fill="#5c4033"/>
+      <polygon points="72,16 78,2 84,14" fill="#5c4033"/>`;
+  } else if (cat.type === "tuxedo") {
+    patterns = `
+      <path d="M 66 33 C 66 45, 77 45, 77 33 Z" fill="#ffffff"/>
+      <ellipse cx="79" cy="30" rx="4" ry="2.8" fill="#ffffff"/>`;
+  }
+
+  let acc = "";
+  if (cat.accessory === "sakura") {
+    acc = `
+      <g transform="translate(68, 12)">
+        <circle cx="-3.5" cy="-2" r="3.2" fill="#ffb4c8"/><circle cx="3.5" cy="-2" r="3.2" fill="#ffb4c8"/>
+        <circle cx="-3.5" cy="3" r="3.2" fill="#ffb4c8"/><circle cx="3.5" cy="3" r="3.2" fill="#ffb4c8"/>
+        <circle cx="0" cy="-4" r="3.2" fill="#ffb4c8"/><circle cx="0" cy="0" r="2.2" fill="#fef08a"/>
+      </g>`;
+  } else if (cat.accessory === "bow") {
+    acc = `
+      <g transform="translate(65, 42)">
+        <polygon points="0,0 -7,-5 -7,5" fill="#ff6584"/><polygon points="0,0 7,-5 7,5" fill="#ff6584"/>
+        <circle cx="0" cy="0" r="2.6" fill="#ff4770"/>
+      </g>`;
+  } else if (cat.accessory === "moon") {
+    acc = `<g transform="translate(66, 42)"><path d="M 0,-4 A 4,4 0 0,0 0,4 A 3,3 0 0,1 0,-4 Z" fill="#f6e05e"/></g>`;
+  } else if (cat.accessory === "cherry") {
+    acc = `
+      <g transform="translate(67, 13)">
+        <path d="M 0,0 Q 2,-7 6,-8" stroke="#48bb78" stroke-width="1.2" fill="none"/>
+        <circle cx="0" cy="0" r="3" fill="#e53e3e"/><circle cx="5" cy="-1" r="2.8" fill="#e53e3e"/>
+        <circle cx="-0.8" cy="-0.8" r="0.9" fill="#fff"/>
+      </g>`;
+  } else if (cat.accessory === "daisy") {
+    acc = `
+      <g transform="translate(68, 12)">
+        <circle cx="-3" cy="0" r="2.5" fill="#ffffff"/><circle cx="3" cy="0" r="2.5" fill="#ffffff"/>
+        <circle cx="0" cy="-3" r="2.5" fill="#ffffff"/><circle cx="0" cy="3" r="2.5" fill="#ffffff"/>
+        <circle cx="0" cy="0" r="2.2" fill="#ecc94b"/>
+      </g>`;
+  } else if (cat.accessory === "clover") {
+    acc = `
+      <g transform="translate(68, 12)">
+        <circle cx="-2.5" cy="-2.5" r="2.5" fill="#48bb78"/><circle cx="2.5" cy="-2.5" r="2.5" fill="#48bb78"/>
+        <circle cx="-2.5" cy="2.5" r="2.5" fill="#48bb78"/><circle cx="2.5" cy="2.5" r="2.5" fill="#48bb78"/>
+        <path d="M 0,2 Q -1,7 0,8" stroke="#38a169" stroke-width="1.2" fill="none"/>
+      </g>`;
+  } else if (cat.accessory === "boba") {
+    acc = `<g transform="translate(66, 42)"><circle cx="0" cy="0" r="3.2" fill="#718096"/><circle cx="-0.8" cy="-0.8" r="1" fill="#fff" opacity="0.6"/></g>`;
+  } else if (cat.accessory === "bell") {
+    acc = `<g transform="translate(66, 42)"><path d="M -5,-3 Q 0,2 5,-3" stroke="#e53e3e" stroke-width="2.2" fill="none"/><circle cx="0" cy="1" r="3.2" fill="#ecc94b"/></g>`;
+  } else if (cat.accessory === "strawberry") {
+    acc = `
+      <g transform="translate(68, 13)">
+        <path d="M -3,-2 Q 0,5 3,-2 Q 0,-4 -3,-2 Z" fill="#e53e3e"/>
+        <polygon points="-3,-2 0,-4 3,-2 0,-3" fill="#48bb78"/>
+        <circle cx="-1" cy="0" r="0.5" fill="#fff"/><circle cx="1" cy="0" r="0.5" fill="#fff"/>
+      </g>`;
+  }
+
+  return `
+    <svg viewBox="0 0 96 74" class="cat-svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="eye-${cat.name}-${id}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="40%" stop-color="${cat.eyeColor}"/>
+          <stop offset="100%" stop-color="#1a202c"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Far Legs -->
+      <g class="leg leg-back-far">
+        <rect x="29" y="42" width="7.5" height="24" rx="4" fill="${cat.farCoat}"/>
+      </g>
+      <g class="leg leg-front-far">
+        <rect x="61" y="42" width="7.5" height="24" rx="4" fill="${cat.farCoat}"/>
+      </g>
+
+      <!-- Fluffy Tail -->
+      <g class="cat-tail">
+        <path d="M 24 40 C 11 38, 5 21, 13 13 C 18 9, 23 12, 19 17 C 13 24, 16 34, 26 36 Z" fill="${cat.coat}"/>
+      </g>
+
+      <!-- Body Group -->
+      <g class="cat-body-group">
+        <path d="M 24 38 C 22 25, 38 20, 56 22 C 70 24, 77 31, 75 44 C 73 54, 58 57, 42 56 C 28 55, 24 47, 24 38 Z" fill="${cat.coat}"/>
+        <ellipse cx="46" cy="44" rx="14" ry="9.5" fill="${cat.belly}" opacity="0.95"/>
+        ${patterns}
+
+        <!-- Head -->
+        <g class="cat-head">
+          <polygon points="63,16 68,3 74,13" fill="${cat.coat}"/>
+          <polygon points="65,15 68,6 72,13" fill="${cat.innerEar}"/>
+          
+          <circle cx="72" cy="27" r="14.5" fill="${cat.coat}"/>
+          <path d="M 83 31 Q 88 34 83 37" fill="${cat.coat}"/>
+
+          <polygon points="72,16 78,2 84,14" fill="${cat.coat}"/>
+          <polygon points="74,15 78,6 82,13" fill="${cat.innerEar}"/>
+
+          <ellipse cx="78" cy="32" rx="3.5" ry="2" fill="#ff7698" opacity="0.6"/>
+          <path d="M 76.5 31.5 L 77.8 33 M 79 31.5 L 80.3 33" stroke="#ff4770" stroke-width="0.8" stroke-linecap="round" opacity="0.65"/>
+
+          <!-- Pretty Sparkly Anime Eyes -->
+          <g class="cat-eye-open">
+            <ellipse cx="78.5" cy="24" rx="4" ry="4.8" fill="#1a202c"/>
+            <ellipse cx="78.5" cy="24.2" rx="3.4" ry="4.2" fill="url(#eye-${cat.name}-${id})"/>
+            <ellipse cx="78.5" cy="24.5" rx="1.8" ry="2.6" fill="#0f172a"/>
+            <circle cx="79.6" cy="22.5" r="1.4" fill="#ffffff"/>
+            <circle cx="77.2" cy="26" r="0.8" fill="#ffffff" opacity="0.9"/>
+            <path d="M 74.2 21.8 Q 78.5 19 83 22" stroke="#2d3748" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <path d="M 82 21.8 Q 83.5 20.5 84 21.8" stroke="#2d3748" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+          </g>
+
+          <!-- Nose & Kawaii :3 Mouth -->
+          <path d="M 84.5 27.8 L 86.8 27.8 L 85.6 29.3 Z" fill="#ff6584"/>
+          <path d="M 85.6 29.3 Q 84.2 31.5 82.5 30.8 M 85.6 29.3 Q 87 31.5 88.5 30.8" stroke="#5a3545" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+
+          <!-- Whiskers -->
+          <g stroke="#85586f" stroke-width="0.9" opacity="0.55" stroke-linecap="round" fill="none">
+            <path d="M 84 29 Q 92 28 94 26"/>
+            <path d="M 84 30.5 Q 92 32 94 34"/>
+          </g>
+
+          ${acc}
+        </g>
+      </g>
+
+      <!-- Near Legs -->
+      <g class="leg leg-back-near">
+        <rect x="36" y="44" width="7.5" height="24" rx="4" fill="${cat.coat}"/>
+      </g>
+      <g class="leg leg-front-near">
+        <rect x="68" y="44" width="7.5" height="24" rx="4" fill="${cat.coat}"/>
+      </g>
+    </svg>`;
+}
+
+/* =========================================================
+   PARTICLES & EFFECTS
+   ========================================================= */
+const rand = (min, max) => min + Math.random() * (max - min);
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+function spawnParticles(x, y, count = 8, icons = ["🐾", "✨", "🌸", "💖"]) {
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("span");
+    el.className = "particle";
+    el.textContent = pick(icons);
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+    el.style.setProperty("--dx", `${rand(-75, 75)}px`);
+    el.style.setProperty("--dy", `${rand(-95, -20)}px`);
+    el.style.setProperty("--rot", `${rand(-45, 45)}deg`);
+    el.style.fontSize = `${rand(1.2, 1.8)}rem`;
+    document.body.appendChild(el);
+    el.addEventListener("animationend", () => el.remove());
+  }
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("activityToast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+/* =========================================================
+   HAPPINESS / PURR-O-METER
+   ========================================================= */
+let happiness = 20;
+function addHappiness(pts = 5) {
+  happiness = Math.min(100, happiness + pts);
+  document.getElementById("happyScore").textContent = happiness;
+  if (happiness === 100) {
+    document.getElementById("happinessPill").style.background = "linear-gradient(135deg, #fef08a, #facc15)";
+    document.getElementById("happinessPill").style.color = "#854d0e";
+    showToast("🌟 100% Happy! You're the best 💖");
+  }
+}
+
+/* =========================================================
+   WANDERING CATS ENGINE
+   ========================================================= */
+const catsContainer = document.getElementById("catsContainer");
+const catsList = [];
+let readNotesSet = new Set();
+let activeModalCatIndex = 0;
+let isNightMode = false;
+let currentTool = null; // 'laser' | 'brush' | null
+
+function getSafeBounds() {
+  const padX = 20;
+  const padTop = 75;
+  const padBottom = 80;
+  return {
+    minX: padX,
+    maxX: Math.max(padX + 70, window.innerWidth - 85),
+    minY: padTop,
+    maxY: Math.max(padTop + 70, window.innerHeight - padBottom)
+  };
+}
+
+// Spawn the 9 pretty cats
+CONFIG.cats.forEach((catData, index) => {
+  const bounds = getSafeBounds();
+  const el = document.createElement("div");
+  el.className = "cat";
+  el.innerHTML = `
+    <div class="cat-shadow"></div>
+    <div class="thought-bubble">sowwry 🥺</div>
+    <div class="cat-sprite">${buildPrettyCatSVG(catData, index)}</div>
+    <div class="cat-name-tag">${catData.tag}</div>
+  `;
+  catsContainer.appendChild(el);
+
+  const startX = rand(bounds.minX, bounds.maxX);
+  const startY = rand(bounds.minY, bounds.maxY);
+
+  const catObj = {
+    index,
+    data: catData,
+    el,
+    sprite: el.querySelector(".cat-sprite"),
+    bubble: el.querySelector(".thought-bubble"),
+    nameTag: el.querySelector(".cat-name-tag"),
+    x: startX,
+    y: startY,
+    targetX: startX,
+    targetY: startY,
+    speed: rand(0.7, 1.2),
+    facing: Math.random() > 0.5 ? 1 : -1,
+    state: "idle",
+    idleTimer: Math.floor(rand(40, 150)),
+    isRead: false,
+    inBox: false
+  };
+
+  // Click handler
+  el.addEventListener("pointerdown", e => {
+    e.stopPropagation();
+    if (currentTool === "brush") {
+      brushCat(catObj, e.clientX, e.clientY);
+    } else {
+      openCatNote(catObj, e.clientX, e.clientY);
+    }
+  });
+
+  catsList.push(catObj);
+});
+
+/* Autonomous loop */
+function updateCats() {
+  const bounds = getSafeBounds();
+
+  catsList.forEach(cat => {
+    if (cat.inBox) return; // stays inside cardboard box
+
+    // Keep on screen on resize
+    if (cat.x > bounds.maxX) { cat.x = bounds.maxX; cat.targetX = bounds.maxX; }
+    if (cat.x < bounds.minX) { cat.x = bounds.minX; cat.targetX = bounds.minX; }
+    if (cat.y > bounds.maxY) { cat.y = bounds.maxY; cat.targetY = bounds.maxY; }
+    if (cat.y < bounds.minY) { cat.y = bounds.minY; cat.targetY = bounds.minY; }
+
+    if (cat.state === "walking") {
+      const dx = cat.targetX - cat.x;
+      const dy = cat.targetY - cat.y;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist < 4) {
+        cat.x = cat.targetX;
+        cat.y = cat.targetY;
+        cat.state = "idle";
+        cat.idleTimer = isNightMode ? Math.floor(rand(200, 450)) : Math.floor(rand(120, 260));
+        cat.el.classList.remove("walking");
+
+        if (isNightMode) {
+          showThought(cat, pick(["💭 zzz", "💭 💤", "💭 🌙"]));
+        } else if (Math.random() < 0.35) {
+          showThought(cat, pick(["sowwry 🥺", "💭 🐾", "💭 🌸", "💭 🐟", "sowwwwry 💕", "💭 ✨"]));
+        }
+      } else {
+        const vx = (dx / dist) * cat.speed;
+        const vy = (dy / dist) * cat.speed;
+        cat.x += vx;
+        cat.y += vy;
+
+        const newFacing = vx >= 0 ? 1 : -1;
+        if (newFacing !== cat.facing) {
+          cat.facing = newFacing;
+          cat.sprite.style.transform = `scaleX(${cat.facing})`;
+          cat.el.style.setProperty("--facing", cat.facing);
+        }
+        if (!cat.el.classList.contains("walking")) {
+          cat.el.classList.add("walking");
+        }
+      }
+    } else if (cat.state === "idle") {
+      cat.idleTimer--;
+      if (cat.idleTimer <= 0) {
+        cat.targetX = rand(bounds.minX, bounds.maxX);
+        cat.targetY = rand(bounds.minY, bounds.maxY);
+        cat.state = "walking";
+        cat.el.classList.add("walking");
+        cat.facing = cat.targetX >= cat.x ? 1 : -1;
+        cat.sprite.style.transform = `scaleX(${cat.facing})`;
+        cat.el.style.setProperty("--facing", cat.facing);
+      }
+    } else if (cat.state === "eating") {
+      cat.idleTimer--;
+      if (cat.idleTimer <= 0) {
+        cat.state = "idle";
+        cat.idleTimer = 80;
+      }
+    }
+
+    cat.el.style.transform = `translate3d(${cat.x}px, ${cat.y}px, 0)`;
+    cat.el.style.zIndex = Math.floor(cat.y);
+  });
+
+  requestAnimationFrame(updateCats);
+}
+requestAnimationFrame(updateCats);
+
+function showThought(cat, text, durationMs = 2400) {
+  cat.bubble.textContent = text;
+  cat.bubble.classList.add("show");
+  clearTimeout(cat._bubbleTimeout);
+  cat._bubbleTimeout = setTimeout(() => {
+    cat.bubble.classList.remove("show");
+  }, durationMs);
+}
+
+/* =========================================================
+   SOWWWWRY MODAL LOGIC
+   ========================================================= */
+const noteModal = document.getElementById("noteModal");
+const modalAvatar = document.getElementById("modalAvatar");
+const modalCatName = document.getElementById("modalCatName");
+const modalHeadline = document.getElementById("modalHeadline");
+const modalSub = document.getElementById("modalSub");
+const modalForgiveBtn = document.getElementById("modalForgiveBtn");
+const readCountEl = document.getElementById("readCount");
+
+function openCatNote(catObj, clientX, clientY) {
+  activeModalCatIndex = catObj.index;
+  const d = catObj.data;
+
+  catObj.el.classList.add("happy");
+  setTimeout(() => catObj.el.classList.remove("happy"), 700);
+  playMeow(rand(0.95, 1.3));
+
+  const rect = catObj.el.getBoundingClientRect();
+  const px = clientX || (rect.left + rect.width / 2);
+  const py = clientY || (rect.top + rect.height / 2);
+  spawnParticles(px, py, 10, ["🐾", "✨", "🌸", "💖"]);
+
+  showThought(catObj, d.headline, 3000);
+
+  if (!catObj.isRead) {
+    catObj.isRead = true;
+    catObj.el.classList.add("is-read");
+    readNotesSet.add(catObj.index);
+    readCountEl.textContent = readNotesSet.size;
+    addHappiness(8);
+  }
+
+  modalAvatar.innerHTML = buildPrettyCatSVG(d, 999);
+  modalCatName.textContent = d.tag;
+  modalHeadline.textContent = d.headline;
+  modalSub.textContent = d.sub;
+  modalForgiveBtn.textContent = "Forgive? 🥺💖";
+
+  noteModal.classList.add("active");
+}
+
+document.getElementById("modalClose").addEventListener("click", () => {
+  noteModal.classList.remove("active");
+});
+noteModal.addEventListener("click", e => {
+  if (e.target === noteModal) noteModal.classList.remove("active");
+});
+
+// "Forgive? 🥺💖" Button
+modalForgiveBtn.addEventListener("click", e => {
+  playChime();
+  const catObj = catsList[activeModalCatIndex];
+  catObj.el.classList.add("happy");
+  setTimeout(() => catObj.el.classList.remove("happy"), 800);
+
+  modalHeadline.textContent = "YAAAY!! 😻💖";
+  modalSub.textContent = `Thank you so much! ${CONFIG.yourName} is smiling now! ✨`;
+  modalForgiveBtn.textContent = "Thank you! 💕";
+
+  showThought(catObj, "YAYYY!! 😻💖", 3000);
+  addHappiness(25);
+
+  const r = e.target.getBoundingClientRect();
+  spawnParticles(r.left + r.width / 2, r.top, 16, ["💖", "✨", "🌸", "😻", "🎉"]);
+});
+
+// Pet button inside modal
+document.getElementById("modalPetBtn").addEventListener("click", e => {
+  playPurr();
+  const catObj = catsList[activeModalCatIndex];
+  showThought(catObj, "Purrr~ 💖", 2500);
+  catObj.el.classList.add("happy");
+  setTimeout(() => catObj.el.classList.remove("happy"), 600);
+  addHappiness(5);
+  const r = e.target.getBoundingClientRect();
+  spawnParticles(r.left + r.width / 2, r.top, 10, ["🐾", "💖", "✨"]);
+});
+
+// Next cat inside modal
+document.getElementById("modalNextBtn").addEventListener("click", () => {
+  activeModalCatIndex = (activeModalCatIndex + 1) % CONFIG.cats.length;
+  openCatNote(catsList[activeModalCatIndex]);
+});
+
+/* =========================================================
+   ACTIVITY 1: LASER POINTER 🔴
+   ========================================================= */
+const laserDot = document.getElementById("laserDot");
+const dockLaser = document.getElementById("dockLaser");
+
+dockLaser.addEventListener("click", () => {
+  if (currentTool === "laser") {
+    currentTool = null;
+    dockLaser.classList.remove("active");
+    laserDot.style.display = "none";
+    showToast("Laser turned OFF");
+  } else {
+    currentTool = "laser";
+    dockLaser.classList.add("active");
+    document.getElementById("dockBrush").classList.remove("active");
+    laserDot.style.display = "block";
+    showToast("Laser ON! Drag anywhere 🔴");
+    playMeow(1.4);
+  }
+});
+
+function moveLaser(x, y) {
+  laserDot.style.left = `${x}px`;
+  laserDot.style.top = `${y}px`;
+
+  // Closest 2 cats chase the laser!
+  catsList.forEach(cat => {
+    if (cat.inBox) return;
+    const d = Math.hypot(cat.x - x, cat.y - y);
+    if (d < 220) {
+      cat.targetX = x - 25;
+      cat.targetY = y - 25;
+      cat.state = "walking";
+      cat.speed = 2.1; // runs fast after laser!
+      if (d < 25) {
+        cat.el.classList.add("happy");
+        setTimeout(() => cat.el.classList.remove("happy"), 300);
+        showThought(cat, "Pounce! 🐾", 1000);
+        addHappiness(1);
+      }
+    }
+  });
+}
+
+/* =========================================================
+   ACTIVITY 2: BRUSH / GROOM 🪮
+   ========================================================= */
+const dockBrush = document.getElementById("dockBrush");
+dockBrush.addEventListener("click", () => {
+  if (currentTool === "brush") {
+    currentTool = null;
+    dockBrush.classList.remove("active");
+    showToast("Brush mode OFF");
+  } else {
+    currentTool = "brush";
+    dockBrush.classList.add("active");
+    dockLaser.classList.remove("active");
+    laserDot.style.display = "none";
+    showToast("Tap cats to brush them 🪮✨");
+    playPurr();
+  }
+});
+
+function brushCat(catObj, x, y) {
+  playPurr();
+  catObj.el.classList.add("happy");
+  setTimeout(() => catObj.el.classList.remove("happy"), 700);
+  showThought(catObj, "Purrr~ so nice! 💖", 2200);
+  spawnParticles(x, y, 9, ["✨", "💖", "🐾"]);
+  addHappiness(6);
+}
+
+/* =========================================================
+   ACTIVITY 3: CARDBOARD BOX 📦 ("If I fits, I sits")
+   ========================================================= */
+const cardboardBox = document.getElementById("cardboardBox");
+const boxOccupant = document.getElementById("boxOccupant");
+let boxedCat = null;
+
+function toggleBox() {
+  if (boxedCat) {
+    // Cat hops out
+    boxedCat.inBox = false;
+    boxedCat.el.style.display = "block";
+    boxedCat.x = cardboardBox.offsetLeft + 80;
+    boxedCat.y = cardboardBox.offsetTop;
+    boxOccupant.innerHTML = "";
+    showThought(boxedCat, "Hop! 🐾");
+    playMeow(1.1);
+    boxedCat = null;
+    showToast("Cat hopped out of the box!");
+  } else {
+    // Nearest cat jumps in!
+    let nearest = null, minDist = Infinity;
+    const bx = cardboardBox.offsetLeft + 30;
+    const by = cardboardBox.offsetTop + 20;
+
+    catsList.forEach(c => {
+      const d = Math.hypot(c.x - bx, c.y - by);
+      if (d < minDist) { minDist = d; nearest = c; }
+    });
+
+    if (nearest) {
+      boxedCat = nearest;
+      nearest.inBox = true;
+      nearest.el.style.display = "none";
+      boxOccupant.innerHTML = buildPrettyCatSVG(nearest.data, 888);
+      playMeow(1.3);
+      playPurr();
+      spawnParticles(bx, by, 8, ["📦", "✨", "💖"]);
+      showToast(`${nearest.data.name}: "If I fits, I sits! 📦"`);
+      addHappiness(10);
+    }
+  }
+}
+
+cardboardBox.addEventListener("click", e => {
+  e.stopPropagation();
+  toggleBox();
+});
+document.getElementById("dockBox").addEventListener("click", toggleBox);
+
+/* =========================================================
+   ACTIVITY 4: NIGHT / DAY MODE 🌙 ☀️
+   ========================================================= */
+const dockNight = document.getElementById("dockNight");
+dockNight.addEventListener("click", () => {
+  isNightMode = !isNightMode;
+  document.getElementById("room").classList.toggle("night-mode", isNightMode);
+  dockNight.textContent = isNightMode ? "☀️ Day" : "🌙 Night";
+  dockNight.classList.toggle("active", isNightMode);
+
+  if (isNightMode) {
+    showToast("Good night! Cats are sleepy 🌙");
+    catsList.forEach(c => {
+      c.speed = rand(0.3, 0.6);
+      showThought(c, pick(["*yawn* 🥱", "Sleepy... 🌙", "Zzz..."]));
+    });
+    playPurr();
+  } else {
+    showToast("Good morning! Cats wake up ☀️");
+    catsList.forEach(c => {
+      c.speed = rand(0.7, 1.2);
+      showThought(c, pick(["*stretch* 🐾", "Good morning! ☀️", "Meow!"]));
+    });
+    playMeow(1.2);
+  }
+  addHappiness(5);
+});
+
+/* =========================================================
+   ACTIVITY 5: DROP TREAT 🐟 (Floor Click / Button)
+   ========================================================= */
+function dropTreat(x, y) {
+  const treatEl = document.createElement("div");
+  treatEl.className = "floor-treat";
+  treatEl.textContent = "🐟";
+  treatEl.style.left = `${x - 14}px`;
+  treatEl.style.top = `${y - 14}px`;
+  document.getElementById("room").appendChild(treatEl);
+
+  playMeow(1.35);
+
+  let nearestCat = null;
+  let minDist = Infinity;
+  catsList.forEach(cat => {
+    if (cat.inBox) return;
+    const d = Math.hypot(cat.x - x, cat.y - y);
+    if (d < minDist) {
+      minDist = d;
+      nearestCat = cat;
+    }
+  });
+
+  if (nearestCat) {
+    showThought(nearestCat, "🐟 Treat!");
+    nearestCat.targetX = Math.max(20, Math.min(window.innerWidth - 80, x - 30));
+    nearestCat.targetY = Math.max(80, Math.min(window.innerHeight - 80, y - 25));
+    nearestCat.state = "walking";
+    nearestCat.speed = 1.7;
+
+    const checkArrival = setInterval(() => {
+      const d = Math.hypot(nearestCat.x - (x - 30), nearestCat.y - (y - 25));
+      if (d < 18) {
+        clearInterval(checkArrival);
+        treatEl.remove();
+        spawnParticles(x, y, 8, ["✨", "🐟", "😋"]);
+        playPurr();
+        showThought(nearestCat, "Nom nom! 😋");
+        nearestCat.state = "eating";
+        nearestCat.idleTimer = 100;
+        nearestCat.speed = rand(0.7, 1.2);
+        addHappiness(6);
+      }
+    }, 120);
+
+    setTimeout(() => {
+      clearInterval(checkArrival);
+      if (treatEl.parentNode) treatEl.remove();
+    }, 9000);
+  }
+}
+
+document.getElementById("dockTreat").addEventListener("click", () => {
+  const rug = document.getElementById("rug").getBoundingClientRect();
+  const tx = rug.left + rug.width / 2 + rand(-50, 50);
+  const ty = rug.top + rug.height / 2 + rand(-30, 30);
+  dropTreat(tx, ty);
+});
+
+/* =========================================================
+   ACTIVITY 6: CALL ALL CATS 🔔
+   ========================================================= */
+document.getElementById("dockCall").addEventListener("click", () => {
+  playChime();
+  const rug = document.getElementById("rug").getBoundingClientRect();
+  const rx = rug.left + rug.width / 2;
+  const ry = rug.top + rug.height / 2;
+
+  catsList.forEach((cat, i) => {
+    if (cat.inBox) return;
+    const angle = (i / catsList.length) * Math.PI * 2;
+    const rX = rand(40, 160);
+    const rY = rand(25, 80);
+    cat.targetX = rx + Math.cos(angle) * rX - 35;
+    cat.targetY = ry + Math.sin(angle) * rY - 25;
+    cat.state = "walking";
+    cat.speed = rand(1.3, 1.8);
+    showThought(cat, pick(["🔔!", "Meow~", "Coming!"]));
+  });
+  showToast("Calling all cats to the rug! 🔔");
+  addHappiness(5);
+});
+
+/* =========================================================
+   TOUCH & POINTER INTERACTIONS (Phone Friendly!)
+   ========================================================= */
+const room = document.getElementById("room");
+
+room.addEventListener("pointerdown", e => {
+  if (e.target.closest(".cat, .top-bar, .bottom-dock, .modal-overlay, .yarn-ball, .bowl, .cardboard-box")) return;
+  if (currentTool === "laser") {
+    moveLaser(e.clientX, e.clientY);
+  } else {
+    dropTreat(e.clientX, e.clientY);
+  }
+});
+
+room.addEventListener("pointermove", e => {
+  if (currentTool === "laser") {
+    moveLaser(e.clientX, e.clientY);
+  }
+});
+
+// Yarn Ball Click
+const yarnBall = document.getElementById("yarnBall");
+yarnBall.addEventListener("pointerdown", e => {
+  e.stopPropagation();
+  playMeow(1.2);
+  yarnBall.style.transform = `scale(1.3) translate(${rand(-16, 16)}px, ${rand(-10, 10)}px) rotate(${rand(-60, 60)}deg)`;
+  spawnParticles(e.clientX, e.clientY, 6, ["🧶", "✨"]);
+  setTimeout(() => { yarnBall.style.transform = ""; }, 500);
+  addHappiness(4);
+});
+
+// Water Bowl Click
+const waterBowl = document.getElementById("waterBowl");
+waterBowl.addEventListener("pointerdown", e => {
+  e.stopPropagation();
+  playPurr();
+  spawnParticles(e.clientX, e.clientY, 5, ["💧", "🐾"]);
+  const cat = pick(catsList);
+  showThought(cat, "Slurp slurp 🐾");
+  addHappiness(3);
+});
+
+// Counter click opens unread cat
+document.getElementById("readCounter").addEventListener("click", () => {
+  const unread = catsList.find(c => !c.isRead);
+  if (unread) {
+    openCatNote(unread);
+  } else {
+    openCatNote(catsList[0]);
+  }
+});
+</script>
+</body>
+</html>
